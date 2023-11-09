@@ -1,5 +1,6 @@
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
@@ -138,8 +139,32 @@ public class MyDirectedUnweightedGraph implements MyGraph{
     @Override
     public void read(Scanner in) {
        
+        LinkedList<Integer> fileEntry = new LinkedList<>();
+        int penalty, numberOfNodes;
 
-        //this is what we have to impliment 
+        //puts the numbers in a list
+        while (in.hasNextInt()) {
+
+            fileEntry.add(in.nextInt());
+
+        }
+
+        //puts in the penalty and the number of nodes
+        for (int i = 0; i < 2; i++) {
+
+            if (i == 0) {
+
+                penalty = fileEntry.poll();
+
+            } else {
+
+                numberOfNodes = fileEntry.poll();
+
+            }
+
+        }
+
+        
 
         /* while(in.hasNextLine()) {
             
