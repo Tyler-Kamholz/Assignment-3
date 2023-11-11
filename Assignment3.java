@@ -9,11 +9,7 @@ public class Assignment3  {
 
             in = new Scanner(new File("input.txt"));
 
-            while(in.hasNextInt()) {
-                System.out.println(in.nextInt());
-            }
-
-            MyDirectedUnweightedGraph graph = new MyDirectedUnweightedGraph();
+            MyDirectedWeightedGraph graph = new MyDirectedWeightedGraph();
             graph.read(in);
     
             //do whatever here
