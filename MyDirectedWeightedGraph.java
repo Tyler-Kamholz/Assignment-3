@@ -18,10 +18,6 @@ public class MyDirectedWeightedGraph implements MyGraph {
 
 
 
-
-
-
-
     public int getEdgeWeight(MyVertex start, MyVertex next) {
         return weightedNeighbors.get(start).get(next);
     }
@@ -163,8 +159,8 @@ public class MyDirectedWeightedGraph implements MyGraph {
             addEdge(vtx1, startVertex, leftWeight);
             addEdge(vtx2, startVertex, rightWeight);
 
-            startVertex.turnDirection.put(vtx1, "up");
-            startVertex.turnDirection.put(vtx2, "down");
+            startVertex.turnDirection.put(vtx1, "down");
+            startVertex.turnDirection.put(vtx2, "up");
         
             System.out.println(vtx1 + " " + startVertex + " " + leftWeight);
             System.out.println(vtx2 + " " + startVertex + " " + rightWeight);
@@ -219,7 +215,7 @@ public class MyDirectedWeightedGraph implements MyGraph {
             if (!v.isKnown()) {
                 path.add(v);
                 int newPathWeight = pathWeight + weightedNeighbors.get(current).get(v);
-                if (current.turnDirection.get(v) != currentDirection) {
+                if (!current.turnDirection.get(v).equals(currentDirection)) {
                     newPathWeight += penalty;
                 }
 
