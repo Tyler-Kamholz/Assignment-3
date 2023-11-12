@@ -79,7 +79,9 @@ public class MyDirectedWeightedGraph implements MyGraph {
     }
 
     public int getEdgeWeight(MyVertex start, MyVertex next) {
+
         return weightedNeighbors.get(start).get(next);
+        
     }
 
     public MyDirectedWeightedGraph() {
