@@ -10,6 +10,10 @@ public class MyVertex {
         label = inLabel;
     }
     
+    public String getLabel() {
+        return label;
+    }
+    
     public boolean isKnown() {
         return known;
     }

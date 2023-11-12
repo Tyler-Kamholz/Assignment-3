@@ -12,25 +12,25 @@ public class MyDirectedWeightedGraph implements MyGraph {
     private Map<MyVertex, MyVertex> vertices;
     private Map<MyVertex, Map<MyVertex, Integer>> weightedNeighbors; // Map to store neighbors and their weights
     private int size = 0;
+    int shortestPathLength = Integer.MAX_VALUE;
+    LinkedList<MyVertex> shortestPath;
 
 
-
-
-    private void search(MyVertex startNode, MyVertex currentNode, List<Integer> currentPath, double currentPathLength) {
-        currentNode.setVisited(true);
+    private void search(MyVertex startNode, MyVertex currentNode, List<MyVertex> currentPath, int currentPathLength) {
+        currentNode.setKnown(true);
 
         if (currentPath.size() == vertices.size()) {
             // Check if we've visited all nodes and can return to the starting node
-            double edgeWeight = getEdgeWeight(currentNode, startNode); // Weight to return to the start
+            int edgeWeight = getEdgeWeight(startNode, currentNode); // Weight to return to the start
             if (currentPathLength + edgeWeight < shortestPathLength) {
                 shortestPathLength = currentPathLength + edgeWeight;
-                shortestPath = new ArrayList<>(currentPath);
+                shortestPath = new LinkedList<MyVertex>(currentPath);
                 shortestPath.add(startNode.getLabel()); // Add the start node to complete the path
             }
         } else {
             for (MyVertex neighbor : neighborsOf(currentNode)) {
                 // Assuming neighborsOf(currentNode) returns the correct neighbors
-                if (!neighbor.isVisited() && !currentPath.contains(neighbor.getLabel())) {
+                if (!neighbor.isKnown() && !currentPath.contains(neighbor.getLabel())) {
                     currentPath.add(neighbor.getLabel());
                     double edgeWeight = getEdgeWeight(currentNode, neighbor);
                     search(startNode, neighbor, currentPath, currentPathLength + edgeWeight);
@@ -40,9 +40,12 @@ public class MyDirectedWeightedGraph implements MyGraph {
         }
 
         // Mark the current node as unvisited to allow other routes
-        currentNode.setVisited(false);
+        currentNode.setKnown(false);
     }
 
+    public int getEdgeWeight(MyVertex start, MyVertex next) {
+        return weightedNeighbors.get(start).get(next);
+    }
 
 
 
