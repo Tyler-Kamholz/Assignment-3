@@ -1,6 +1,8 @@
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
@@ -10,6 +12,39 @@ public class MyDirectedWeightedGraph implements MyGraph {
     private Map<MyVertex, MyVertex> vertices;
     private Map<MyVertex, Map<MyVertex, Integer>> weightedNeighbors; // Map to store neighbors and their weights
     private int size = 0;
+
+
+
+
+    private void search(MyVertex startNode, MyVertex currentNode, List<Integer> currentPath, double currentPathLength) {
+        currentNode.setVisited(true);
+
+        if (currentPath.size() == vertices.size()) {
+            // Check if we've visited all nodes and can return to the starting node
+            double edgeWeight = getEdgeWeight(currentNode, startNode); // Weight to return to the start
+            if (currentPathLength + edgeWeight < shortestPathLength) {
+                shortestPathLength = currentPathLength + edgeWeight;
+                shortestPath = new ArrayList<>(currentPath);
+                shortestPath.add(startNode.getLabel()); // Add the start node to complete the path
+            }
+        } else {
+            for (MyVertex neighbor : neighborsOf(currentNode)) {
+                // Assuming neighborsOf(currentNode) returns the correct neighbors
+                if (!neighbor.isVisited() && !currentPath.contains(neighbor.getLabel())) {
+                    currentPath.add(neighbor.getLabel());
+                    double edgeWeight = getEdgeWeight(currentNode, neighbor);
+                    search(startNode, neighbor, currentPath, currentPathLength + edgeWeight);
+                    currentPath.remove(currentPath.size() - 1); // Backtrack
+                }
+            }
+        }
+
+        // Mark the current node as unvisited to allow other routes
+        currentNode.setVisited(false);
+    }
+
+
+
 
     public MyDirectedWeightedGraph() {
         vertices = new HashMap<>();
