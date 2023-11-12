@@ -14,7 +14,7 @@ public class MyDirectedWeightedGraph implements MyGraph {
     private Map<MyVertex, Map<MyVertex, String>> turnDirections; // Map to store neighbors and their weights
     private int size = 0;
     int penalty;
-    double shortestPathLength = 0;
+    int shortestPathLength = Integer.MIN_VALUE;
     ArrayList<MyVertex> shortestPath;
 
 
@@ -207,7 +207,7 @@ public class MyDirectedWeightedGraph implements MyGraph {
 
     public void printAllPathsUntil(MyVertex current, MyVertex end, ArrayList<MyVertex> path, int pathWeight, String currentDirection) {
         if (current.equals(end)) {
-            if (pathWeight> shortestPathLength) {
+            if (pathWeight > shortestPathLength) {
                 shortestPath = path;
                 shortestPathLength = pathWeight;
             }
