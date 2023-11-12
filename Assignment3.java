@@ -11,6 +11,7 @@ public class Assignment3  {
 
             MyDirectedWeightedGraph graph = new MyDirectedWeightedGraph();
             graph.read(in);
+            graph.findShortestRoute(1);
     
             //do whatever here
         }

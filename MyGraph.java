@@ -17,6 +17,4 @@ public interface MyGraph {
     public abstract void read(Scanner in);
 
     public abstract int size(); 
-
-    public abstract boolean isVisited();
 }
