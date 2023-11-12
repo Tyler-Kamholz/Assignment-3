@@ -12,69 +12,12 @@ public class MyDirectedWeightedGraph implements MyGraph {
     private Map<MyVertex, MyVertex> vertices;
     private Map<MyVertex, Map<MyVertex, Integer>> weightedNeighbors; // Map to store neighbors and their weights
     private int size = 0;
-    double shortestPathLength = Integer.MAX_VALUE;
-    LinkedList<String> shortestPath;
+    int penalty;
+    double shortestPathLength = 0;
+    ArrayList<MyVertex> shortestPath;
 
 
 
-
-
-
-
-    public void findShortestRoute(int startNode) {
-
-        String startNodeString = startNode + "";
-        MyVertex startVertex = new MyVertex(startNodeString);
-
-        // Adds the start number to the current path
-        List<String> currentPath = new LinkedList<>();
-        currentPath.add(startNodeString);
-
-        long startTime = System.currentTimeMillis();
-
-        // Search
-        search(startVertex, startVertex, currentPath, 0);
-
-        long endTime = System.currentTimeMillis();
-
-        // Writes to the console
-        System.out.print("Shortest Route: ");
-        for (String node : shortestPath) {
-            System.out.print(node + " ");
-        }
-
-        // Had to put this here because the salesman has to go back home
-        System.out.println();
-        System.out.println("Total Length: " + Math.round(shortestPathLength));
-        System.out.println("Total Time Taken: " + (endTime - startTime) + "ms");
-    }
-
-    private void search(MyVertex startNode, MyVertex currentNode, List<String> currentPath, double currentPathLength) {
-        currentNode.setKnown(true);
-
-        if (currentPath.size() == vertices.size()) {
-            // Check if we've visited all nodes and can return to the starting node
-            int edgeWeight = getEdgeWeight(startNode, currentNode); // Weight to return to the start
-            if (currentPathLength + edgeWeight < shortestPathLength) {
-                shortestPathLength = currentPathLength + edgeWeight;
-                shortestPath = new LinkedList<>(currentPath);
-                shortestPath.add(startNode.getLabel()); // Add the start node to complete the path
-            }
-        } else {
-            for (MyVertex neighbor : neighborsOf(currentNode)) {
-                // Assuming neighborsOf(currentNode) returns the correct neighbors
-                if (!neighbor.isKnown() && !currentPath.contains(neighbor.getLabel())) {
-                    currentPath.add(neighbor.getLabel());
-                    double edgeWeight = getEdgeWeight(currentNode, neighbor);
-                    search(startNode, neighbor, currentPath, currentPathLength + edgeWeight);
-                    currentPath.remove(currentPath.size() - 1); // Backtrack
-                }
-            }
-        }
-
-        // Mark the current node as unvisited to allow other routes
-        currentNode.setKnown(false);
-    }
 
 
 
@@ -159,7 +102,7 @@ public class MyDirectedWeightedGraph implements MyGraph {
     @Override
     public void read(Scanner in) {
 
-        int penalty = in.nextInt();
+        penalty = in.nextInt();
         int numVertices = in.nextInt();
         int half = numVertices / 2;
 
@@ -191,6 +134,9 @@ public class MyDirectedWeightedGraph implements MyGraph {
             addEdge(startVertex, vtx1, leftWeight);
             addEdge(startVertex, vtx2, rightWeight);
 
+            startVertex.turnDirection.put(vtx1, "up");
+            startVertex.turnDirection.put(vtx2, "down");
+
             System.out.println(startVertex + " " + vtx1 + " " + leftWeight);
             System.out.println(startVertex + " " + vtx2 + " " + rightWeight);
     
@@ -216,6 +162,9 @@ public class MyDirectedWeightedGraph implements MyGraph {
         
             addEdge(vtx1, startVertex, leftWeight);
             addEdge(vtx2, startVertex, rightWeight);
+
+            startVertex.turnDirection.put(vtx1, "up");
+            startVertex.turnDirection.put(vtx2, "down");
         
             System.out.println(vtx1 + " " + startVertex + " " + leftWeight);
             System.out.println(vtx2 + " " + startVertex + " " + rightWeight);
@@ -249,11 +198,17 @@ public class MyDirectedWeightedGraph implements MyGraph {
         ArrayList<MyVertex> path = new ArrayList<>();
         path.add(start);
 
-        printAllPathsUntil(start, end, path, 0);
+        printAllPathsUntil(start, end, path, 0, "");
+        shortestPathLength -= penalty;
+        System.out.println(shortestPathLength);
     }
 
-    public void printAllPathsUntil(MyVertex current, MyVertex end, ArrayList<MyVertex> path, int pathWeight) {
+    public void printAllPathsUntil(MyVertex current, MyVertex end, ArrayList<MyVertex> path, int pathWeight, String currentDirection) {
         if (current.equals(end)) {
+            if (pathWeight > shortestPathLength) {
+                shortestPath = path;
+                shortestPathLength = pathWeight;
+            }
             System.out.println(path + " : " + pathWeight);
             return;
         }
@@ -263,8 +218,12 @@ public class MyDirectedWeightedGraph implements MyGraph {
         for (MyVertex v : neighborsOf(current)) {
             if (!v.isKnown()) {
                 path.add(v);
-                int newPathWeight = pathWeight + weightedNeighbors.get(current).get(v) ;
-                printAllPathsUntil(v, end, path, newPathWeight);
+                int newPathWeight = pathWeight + weightedNeighbors.get(current).get(v);
+                if (current.turnDirection.get(v) != currentDirection) {
+                    newPathWeight += penalty;
+                }
+
+                printAllPathsUntil(v, end, path, newPathWeight, current.turnDirection.get(v));
 
                 path.remove(v);
             }

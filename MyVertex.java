@@ -1,3 +1,4 @@
+import java.util.HashMap;
 
 /**
  Given. DO NOT modify! Don't give any comment blocks.
@@ -5,9 +6,13 @@
 public class MyVertex {
     protected String label;
     protected boolean known;
+    HashMap<MyVertex, Integer> neighbors; 
+    HashMap<MyVertex, String> turnDirection;
     
     public MyVertex(String inLabel) {
         label = inLabel;
+        neighbors = new HashMap<>();
+        turnDirection = new HashMap<>();
     }
     
     public String getLabel() {
@@ -22,6 +27,11 @@ public class MyVertex {
         known = inKnown;
     }
     
+    public void addNeighbor(MyVertex neighbor, int weight, String direction) {
+        neighbors.put(neighbor, weight);
+        turnDirection.put(neighbor, direction);
+    }
+
     public String toString() {
         return label;
     }
@@ -51,4 +61,6 @@ public class MyVertex {
             return false;
         return true;
     }
+
+
 }
