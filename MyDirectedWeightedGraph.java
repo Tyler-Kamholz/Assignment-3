@@ -122,17 +122,23 @@ public class MyDirectedWeightedGraph implements MyGraph {
     
         }
 
-        
+        counter1 = 1;
+        counter2 = 2;
+        int heightGraph = (int) Math.sqrt(numVertices);
 
-        for (int i = numVertices; i > half; i -= 2) {
+        for (int i = numVertices; i > (numVertices - ((heightGraph * (heightGraph - 1)) /2 )); i--) {
 
+            if ((i & (i - 1)) == 0 && i != 0) { 
+                counter1 = counter1 + 1;
+                counter2 = counter2 + 1;
+            }
 
             int leftWeight = list.pollLast();
             int rightWeight = list.pollLast();
         
             MyVertex startVertex = new MyVertex(i + "");
-            MyVertex vtx1 = new MyVertex((i - 1) + "");
-            MyVertex vtx2 = new MyVertex((i - 2) + "");
+            MyVertex vtx1 = new MyVertex((i - counter1) + "");
+            MyVertex vtx2 = new MyVertex((i - counter2) + "");
         
             addEdge(startVertex, vtx1, leftWeight);
             addEdge(startVertex, vtx2, rightWeight);
