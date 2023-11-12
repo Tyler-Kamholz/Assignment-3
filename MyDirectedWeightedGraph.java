@@ -10,7 +10,8 @@ import java.util.Set;
 public class MyDirectedWeightedGraph implements MyGraph {
 
     private Map<MyVertex, MyVertex> vertices;
-    private Map<MyVertex, Map<MyVertex, Integer>> weightedNeighbors; // Map to store neighbors and their weights
+    private Map<MyVertex, Map<MyVertex, Integer>> weightedNeighbors;
+    private Map<MyVertex, Map<MyVertex, String>> turnDirections; // Map to store neighbors and their weights
     private int size = 0;
     int penalty;
     double shortestPathLength = 0;
@@ -27,6 +28,7 @@ public class MyDirectedWeightedGraph implements MyGraph {
     public MyDirectedWeightedGraph() {
         vertices = new HashMap<>();
         weightedNeighbors = new HashMap<>();
+        turnDirections = new HashMap<>();
     }
 
     @Override
@@ -59,7 +61,7 @@ public class MyDirectedWeightedGraph implements MyGraph {
     }
 
     @Override
-    public boolean addEdge(MyVertex dummyVtx1, MyVertex dummyVtx2, int weight) {
+    public boolean addEdge(MyVertex dummyVtx1, MyVertex dummyVtx2, int weight, String direction) {
         if (dummyVtx1.equals(dummyVtx2)) {
             return false;
         }
@@ -69,7 +71,7 @@ public class MyDirectedWeightedGraph implements MyGraph {
 
         MyVertex realVtx2 = vertices.get(dummyVtx2);
 
-        if (addEdgeHelper(dummyVtx1, realVtx2, weight)) {
+        if (addEdgeHelper(dummyVtx1, realVtx2, weight, direction)) {
             size++;
             return true;
         }
@@ -77,19 +79,24 @@ public class MyDirectedWeightedGraph implements MyGraph {
         return false;
     }
 
-    private boolean addEdgeHelper(MyVertex vtx1, MyVertex vtx2, int weight) {
+    private boolean addEdgeHelper(MyVertex vtx1, MyVertex vtx2, int weight, String direction) {
         Map<MyVertex, Integer> neighborMap = weightedNeighbors.get(vtx1);
+         Map<MyVertex, String> directionMap = turnDirections.get(vtx1);
 
         if (neighborMap == null) {
             neighborMap = new HashMap<>();
+            directionMap = new HashMap<>();
             neighborMap.put(vtx2, weight);
+            directionMap.put(vtx2, direction);
             weightedNeighbors.put(vtx1, neighborMap);
+            turnDirections.put(vtx1, directionMap);
             return true;
         } else {
             if (neighborMap.containsKey(vtx2)) {
                 return false; // Edge already exists
             } else {
                 neighborMap.put(vtx2, weight);
+                directionMap.put(vtx2, direction);
                 return true;
             }
         }
@@ -127,8 +134,8 @@ public class MyDirectedWeightedGraph implements MyGraph {
             MyVertex vtx1 = new MyVertex((i + counter1) + "");
             MyVertex vtx2 = new MyVertex((i + counter2) + "");
 
-            addEdge(startVertex, vtx1, leftWeight);
-            addEdge(startVertex, vtx2, rightWeight);
+            addEdge(startVertex, vtx1, leftWeight, "up");
+            addEdge(startVertex, vtx2, rightWeight, "down");
 
             startVertex.turnDirection.put(vtx1, "up");
             startVertex.turnDirection.put(vtx2, "down");
@@ -156,8 +163,8 @@ public class MyDirectedWeightedGraph implements MyGraph {
             MyVertex vtx1 = new MyVertex((i - counter1) + "");
             MyVertex vtx2 = new MyVertex((i - counter2) + "");
         
-            addEdge(vtx1, startVertex, leftWeight);
-            addEdge(vtx2, startVertex, rightWeight);
+            addEdge(vtx1, startVertex, leftWeight, "up");
+            addEdge(vtx2, startVertex, rightWeight, "down");
 
             startVertex.turnDirection.put(vtx1, "down");
             startVertex.turnDirection.put(vtx2, "up");
@@ -194,14 +201,13 @@ public class MyDirectedWeightedGraph implements MyGraph {
         ArrayList<MyVertex> path = new ArrayList<>();
         path.add(start);
 
-        printAllPathsUntil(start, end, path, 0, "");
-        shortestPathLength -= penalty;
+        printAllPathsUntil(start, end, path, Math.abs(penalty), "");
         System.out.println(shortestPathLength);
     }
 
     public void printAllPathsUntil(MyVertex current, MyVertex end, ArrayList<MyVertex> path, int pathWeight, String currentDirection) {
         if (current.equals(end)) {
-            if (pathWeight > shortestPathLength) {
+            if (pathWeight> shortestPathLength) {
                 shortestPath = path;
                 shortestPathLength = pathWeight;
             }
@@ -215,11 +221,11 @@ public class MyDirectedWeightedGraph implements MyGraph {
             if (!v.isKnown()) {
                 path.add(v);
                 int newPathWeight = pathWeight + weightedNeighbors.get(current).get(v);
-                if (!current.turnDirection.get(v).equals(currentDirection)) {
+                if (!turnDirections.get(current).get(v).equals(currentDirection)) {
                     newPathWeight += penalty;
                 }
 
-                printAllPathsUntil(v, end, path, newPathWeight, current.turnDirection.get(v));
+                printAllPathsUntil(v, end, path, newPathWeight, turnDirections.get(current).get(v));
 
                 path.remove(v);
             }

@@ -12,7 +12,7 @@ public interface MyGraph {
 
     public abstract boolean addVertex(MyVertex vtx);
 
-    public abstract  boolean addEdge(MyVertex dummyVtx1, MyVertex dummyVtx2, int weight);
+    public abstract  boolean addEdge(MyVertex dummyVtx1, MyVertex dummyVtx2, int weight, String direction);
 
     public abstract void read(Scanner in);
 
