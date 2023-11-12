@@ -140,11 +140,11 @@ public class MyDirectedWeightedGraph implements MyGraph {
             MyVertex vtx1 = new MyVertex((i - counter1) + "");
             MyVertex vtx2 = new MyVertex((i - counter2) + "");
         
-            addEdge(startVertex, vtx1, leftWeight);
-            addEdge(startVertex, vtx2, rightWeight);
+            addEdge(vtx1, startVertex, leftWeight);
+            addEdge(vtx2, startVertex, rightWeight);
         
-            System.out.println(startVertex + " " + vtx1 + " " + leftWeight);
-            System.out.println(startVertex + " " + vtx2 + " " + rightWeight);
+            System.out.println(vtx1 + " " + startVertex + " " + leftWeight);
+            System.out.println(vtx2 + " " + startVertex + " " + rightWeight);
 
         } 
 
