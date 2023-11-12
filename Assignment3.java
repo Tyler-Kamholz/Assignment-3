@@ -11,8 +11,8 @@ public class Assignment3  {
 
             MyDirectedWeightedGraph graph = new MyDirectedWeightedGraph();
             graph.read(in);
-            graph.findShortestRoute(1);
     
+            graph.printAllPaths("1", "9");
             //do whatever here
         }
         catch (FileNotFoundException ex) { 
