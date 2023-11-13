@@ -14,8 +14,10 @@ public class MyDirectedWeightedGraph implements MyGraph {
     private Map<MyVertex, Map<MyVertex, String>> turnDirections; // Map to store neighbors and their weights
     private int size = 0;
     int penalty;
-    int shortestPathLength = Integer.MIN_VALUE;
-    ArrayList<MyVertex> shortestPath;
+    int bestPathLength = Integer.MIN_VALUE;
+    ArrayList<MyVertex> bestPath;
+    int[] pathWeights;
+    HashMap<Integer, ArrayList<MyVertex>> paths;
 
 
 
@@ -29,6 +31,7 @@ public class MyDirectedWeightedGraph implements MyGraph {
         vertices = new HashMap<>();
         weightedNeighbors = new HashMap<>();
         turnDirections = new HashMap<>();
+        paths = new HashMap<>();
     }
 
     @Override
@@ -113,6 +116,13 @@ public class MyDirectedWeightedGraph implements MyGraph {
         int counter2 = 1;
 
         LinkedList<Integer> list = new LinkedList<>();
+
+        pathWeights = new int[numVertices];
+        
+
+        for (int i = 0; i < pathWeights.length; i++) {
+            pathWeights[i] = Integer.MIN_VALUE;
+        }
  
         while (in.hasNextInt()) {
 
@@ -201,15 +211,21 @@ public class MyDirectedWeightedGraph implements MyGraph {
         ArrayList<MyVertex> path = new ArrayList<>();
         path.add(start);
 
-        printAllPathsUntil(start, end, path, Math.abs(penalty), "");
-        System.out.println(shortestPathLength);
+        for (MyVertex v : keys) {
+            end = v;
+            printAllPathsUntil(start, end, path, Math.abs(penalty), "");
+        }
+
+        System.out.println(pathWeights[pathWeights.length - 1]);
     }
 
     public void printAllPathsUntil(MyVertex current, MyVertex end, ArrayList<MyVertex> path, int pathWeight, String currentDirection) {
         if (current.equals(end)) {
-            if (pathWeight > shortestPathLength) {
-                shortestPath = path;
-                shortestPathLength = pathWeight;
+            if (pathWeight > pathWeights[Integer.parseInt(current.label) - 1]) {
+                bestPath = path;
+                //bestPathLength = pathWeight;
+                pathWeights[Integer.parseInt(current.label) - 1] = pathWeight;
+                paths.put(Integer.parseInt(current.label) - 1, path);
             }
             System.out.println(path + " : " + pathWeight);
             return;
